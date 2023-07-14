@@ -4,8 +4,6 @@
   import type { AssetResponseDto } from '@api';
   import { createEventDispatcher } from 'svelte';
   import ArrowLeft from 'svelte-material-icons/ArrowLeft.svelte';
-  import CloudDownloadOutline from 'svelte-material-icons/CloudDownloadOutline.svelte';
-  import ContentCopy from 'svelte-material-icons/ContentCopy.svelte';
   import DeleteOutline from 'svelte-material-icons/DeleteOutline.svelte';
   import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
   import Heart from 'svelte-material-icons/Heart.svelte';
@@ -36,12 +34,19 @@
 
   const showOptionsMenu = ({ x, y }: MouseEvent) => {
     contextMenuPosition = { x, y };
-    isShowAssetOptions = !isShowAssetOptions;
+    isShowAssetOptions = true;
   };
 
   const onMenuClick = (eventName: string) => {
     isShowAssetOptions = false;
-    dispatch(eventName);
+    switch (eventName) {
+      case 'copyImage':
+        window.dispatchEvent(new CustomEvent(eventName));
+        break;
+
+      default:
+        dispatch(eventName);
+    }
   };
 </script>
 
@@ -75,32 +80,10 @@
         hideMobile={true}
         logo={$photoZoomState && $photoZoomState.currentZoom > 1 ? MagnifyMinusOutline : MagnifyPlusOutline}
         title="Zoom Image"
-        on:click={() => {
-          const zoomImage = new CustomEvent('zoomImage');
-          window.dispatchEvent(zoomImage);
-        }}
-      />
-    {/if}
-    {#if showCopyButton}
-      <CircleIconButton
-        isOpacity={true}
-        logo={ContentCopy}
-        title="Copy Image"
-        on:click={() => {
-          const copyEvent = new CustomEvent('copyImage');
-          window.dispatchEvent(copyEvent);
-        }}
+        on:click={() => window.dispatchEvent(new CustomEvent('zoomImage'))}
       />
     {/if}
 
-    {#if showDownloadButton}
-      <CircleIconButton
-        isOpacity={true}
-        logo={CloudDownloadOutline}
-        on:click={() => dispatch('download')}
-        title="Download"
-      />
-    {/if}
     <CircleIconButton isOpacity={true} logo={InformationOutline} on:click={() => dispatch('showDetail')} title="Info" />
     {#if isOwner}
       <CircleIconButton
@@ -114,21 +97,27 @@
     {#if isOwner}
       <CircleIconButton isOpacity={true} logo={DeleteOutline} on:click={() => dispatch('delete')} title="Delete" />
       <div use:clickOutside on:outclick={() => (isShowAssetOptions = false)}>
-        <CircleIconButton isOpacity={true} logo={DotsVertical} on:click={showOptionsMenu} title="More">
-          {#if isShowAssetOptions}
-            <ContextMenu {...contextMenuPosition} direction="left">
-              <MenuOption on:click={() => onMenuClick('addToAlbum')} text="Add to Album" />
-              <MenuOption on:click={() => onMenuClick('addToSharedAlbum')} text="Add to Shared Album" />
+        <CircleIconButton isOpacity={true} logo={DotsVertical} on:click={showOptionsMenu} title="More" />
+        {#if isShowAssetOptions}
+          <ContextMenu {...contextMenuPosition} direction="left">
+            {#if showCopyButton}
+              <MenuOption on:click={() => onMenuClick('copyImage')} text="Copy Image" />
+            {/if}
 
-              {#if isOwner}
-                <MenuOption
-                  on:click={() => dispatch('toggleArchive')}
-                  text={asset.isArchived ? 'Unarchive' : 'Archive'}
-                />
-              {/if}
-            </ContextMenu>
-          {/if}
-        </CircleIconButton>
+            {#if showDownloadButton}
+              <MenuOption on:click={() => onMenuClick('download')} text="Download" />
+            {/if}
+            <MenuOption on:click={() => onMenuClick('addToAlbum')} text="Add to Album" />
+            <MenuOption on:click={() => onMenuClick('addToSharedAlbum')} text="Add to Shared Album" />
+
+            {#if isOwner}
+              <MenuOption
+                on:click={() => dispatch('toggleArchive')}
+                text={asset.isArchived ? 'Unarchive' : 'Archive'}
+              />
+            {/if}
+          </ContextMenu>
+        {/if}
       </div>
     {/if}
   </div>
