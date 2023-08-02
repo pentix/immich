@@ -335,9 +335,7 @@
       {#each $assetStore.buckets as bucket, bucketIndex (bucketIndex)}
         <IntersectionObserver
           on:intersected={intersectedHandler}
-          on:hidden={async () => {
-            await assetStore.cancelBucketRequest(bucket.cancelToken, bucket.bucketDate);
-          }}
+          on:hidden={() => assetStore.cancelBucketRequest(bucket)}
           let:intersecting
           top={750}
           bottom={750}

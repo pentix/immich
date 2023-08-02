@@ -1,4 +1,4 @@
-import { AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
+import { AssetBucket, AssetGridState, BucketPosition } from '$lib/models/asset-grid-state';
 import { api, AssetCountByTimeBucketResponseDto, AssetResponseDto } from '@api';
 import { writable } from 'svelte/store';
 
@@ -11,7 +11,7 @@ export interface AssetStore {
   ) => void;
   getAssetsByBucket: (bucket: string, position: BucketPosition) => Promise<void>;
   updateBucketHeight: (bucket: string, actualBucketHeight: number) => number;
-  cancelBucketRequest: (token: AbortController, bucketDate: string) => Promise<void>;
+  cancelBucketRequest: (bucket: AssetBucket) => void;
   getAdjacentAsset: (assetId: string, direction: 'next' | 'previous') => Promise<string | null>;
   removeAsset: (assetId: string) => void;
   updateAsset: (assetId: string, isFavorite: boolean) => void;
@@ -19,7 +19,6 @@ export interface AssetStore {
 }
 
 export function createAssetStore(): AssetStore {
-  let _loadingBuckets: { [key: string]: boolean } = {};
   let _assetGridState = new AssetGridState();
 
   const { subscribe, set, update } = writable(new AssetGridState());
@@ -62,7 +61,7 @@ export function createAssetStore(): AssetStore {
         bucketDate: bucket.timeBucket,
         bucketHeight: _estimateViewportHeight(bucket.count, viewportWidth),
         assets: [],
-        cancelToken: new AbortController(),
+        cancelToken: null,
         position: BucketPosition.Unknown,
       })),
       assets: [],
@@ -88,7 +87,10 @@ export function createAssetStore(): AssetStore {
         return;
       }
 
-      _loadingBuckets = { ..._loadingBuckets, [bucket]: true };
+      if (currentBucketData) {
+        currentBucketData.cancelToken = new AbortController();
+      }
+
       const { data: assets } = await api.assetApi.getAssetByTimeBucket(
         {
           getAssetByTimeBucketDto: {
@@ -97,9 +99,8 @@ export function createAssetStore(): AssetStore {
             withoutThumbs: true,
           },
         },
-        { signal: currentBucketData?.cancelToken.signal },
+        { signal: currentBucketData?.cancelToken?.signal },
       );
-      _loadingBuckets = { ..._loadingBuckets, [bucket]: false };
 
       update((state) => {
         const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucket);
@@ -169,20 +170,6 @@ export function createAssetStore(): AssetStore {
     }
 
     return 0;
-  };
-
-  const cancelBucketRequest = async (token: AbortController, bucketDate: string) => {
-    if (!_loadingBuckets[bucketDate]) {
-      return;
-    }
-
-    token.abort();
-
-    update((state) => {
-      const bucketIndex = state.buckets.findIndex((b) => b.bucketDate === bucketDate);
-      state.buckets[bucketIndex].cancelToken = new AbortController();
-      return state;
-    });
   };
 
   const updateAsset = (assetId: string, isFavorite: boolean) => {
@@ -260,7 +247,7 @@ export function createAssetStore(): AssetStore {
     getAssetsByBucket,
     removeAsset,
     updateBucketHeight,
-    cancelBucketRequest,
+    cancelBucketRequest: (bucket: AssetBucket) => bucket.cancelToken?.abort(),
     getAdjacentAsset,
     updateAsset,
     subscribe,

@@ -15,7 +15,7 @@ export class AssetBucket {
   bucketHeight!: number;
   bucketDate!: string;
   assets!: AssetResponseDto[];
-  cancelToken!: AbortController;
+  cancelToken!: AbortController | null;
   position!: BucketPosition;
 }
 
