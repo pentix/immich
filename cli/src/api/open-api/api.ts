@@ -2997,7 +2997,19 @@ export interface SystemConfigThumbnailDto {
      * @type {number}
      * @memberof SystemConfigThumbnailDto
      */
+    'quality': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SystemConfigThumbnailDto
+     */
     'webpSize': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SystemConfigThumbnailDto
+     */
+    'wideGamut': boolean;
 }
 /**
  * 
