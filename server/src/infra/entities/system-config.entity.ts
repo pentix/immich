@@ -61,6 +61,8 @@ export enum SystemConfigKey {
 
   THUMBNAIL_WEBP_SIZE = 'thumbnail.webpSize',
   THUMBNAIL_JPEG_SIZE = 'thumbnail.jpegSize',
+  THUMBNAIL_QUALITY = 'thumbnail.quality',
+  THUMBNAIL_WIDE_GAMUT = 'thumbnail.wideGamut',
 }
 
 export enum TranscodePolicy {
@@ -140,5 +142,7 @@ export interface SystemConfig {
   thumbnail: {
     webpSize: number;
     jpegSize: number;
+    quality: number;
+    wideGamut: boolean;
   };
 }
