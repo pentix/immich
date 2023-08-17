@@ -62,7 +62,7 @@ export enum SystemConfigKey {
   THUMBNAIL_WEBP_SIZE = 'thumbnail.webpSize',
   THUMBNAIL_JPEG_SIZE = 'thumbnail.jpegSize',
   THUMBNAIL_QUALITY = 'thumbnail.quality',
-  THUMBNAIL_WIDE_GAMUT = 'thumbnail.wideGamut',
+  THUMBNAIL_COLORSPACE = 'thumbnail.colorspace',
 }
 
 export enum TranscodePolicy {
@@ -96,6 +96,11 @@ export enum ToneMapping {
   MOBIUS = 'mobius',
   REINHARD = 'reinhard',
   DISABLED = 'disabled',
+}
+
+export enum Colorspace {
+  SRGB = 'srgb',
+  P3 = 'p3',
 }
 
 export interface SystemConfig {
@@ -143,6 +148,6 @@ export interface SystemConfig {
     webpSize: number;
     jpegSize: number;
     quality: number;
-    wideGamut: boolean;
+    colorspace: Colorspace;
   };
 }

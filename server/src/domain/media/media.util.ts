@@ -8,7 +8,7 @@ import {
   VideoStreamInfo,
 } from './media.repository';
 class BaseConfig implements VideoCodecSWConfig {
-  constructor(protected config: SystemConfigFFmpegDto) {}
+  constructor(protected config: SystemConfigFFmpegDto) { }
 
   getOptions(stream: VideoStreamInfo) {
     const options = {
@@ -50,7 +50,7 @@ class BaseConfig implements VideoCodecSWConfig {
     if (this.shouldToneMap(stream)) {
       options.push(...this.getToneMapping());
     }
-    options.push(`format=yuv420p`);
+    options.push('format=yuv420p');
 
     return options;
   }
