@@ -1,5 +1,6 @@
 import {
   AudioCodec,
+  Colorspace,
   SystemConfig,
   SystemConfigEntity,
   SystemConfigKey,
@@ -14,7 +15,6 @@ import { IJobRepository, JobName, QueueName } from '../job';
 import { defaults, SystemConfigValidator } from './system-config.core';
 import { ISystemConfigRepository } from './system-config.repository';
 import { SystemConfigService } from './system-config.service';
-import { Colorspace } from '@app/infra/entities';
 
 const updates: SystemConfigEntity[] = [
   { key: SystemConfigKey.FFMPEG_CRF, value: 30 },
