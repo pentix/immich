@@ -286,7 +286,7 @@ describe(FacialRecognitionService.name, () => {
         format: 'jpeg',
         size: 250,
         quality: 80,
-        colorspace: 'p3',
+        colorspace: Colorspace.P3,
       });
       expect(personMock.update).toHaveBeenCalledWith({
         id: 'person-1',
@@ -309,7 +309,7 @@ describe(FacialRecognitionService.name, () => {
         format: 'jpeg',
         size: 250,
         quality: 80,
-        colorspace: 'p3',
+        colorspace: Colorspace.P3,
       });
     });
 
@@ -328,7 +328,7 @@ describe(FacialRecognitionService.name, () => {
         format: 'jpeg',
         size: 250,
         quality: 80,
-        colorspace: 'p3',
+        colorspace: Colorspace.P3,
       });
     });
   });

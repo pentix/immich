@@ -64,6 +64,9 @@ String parameterToString(dynamic value) {
   if (value is AudioCodec) {
     return AudioCodecTypeTransformer().encode(value).toString();
   }
+  if (value is Colorspace) {
+    return ColorspaceTypeTransformer().encode(value).toString();
+  }
   if (value is DeleteAssetStatus) {
     return DeleteAssetStatusTypeTransformer().encode(value).toString();
   }
