@@ -69,7 +69,7 @@ export class MediaService {
         throw new UnsupportedMediaTypeException(`Unsupported asset type for thumbnail generation: ${asset.type}`);
     }
 
-    const resizePath = this.getPath(asset, 'jpeg');
+    const resizePath = this.ensureThumbnailPath(asset, 'jpeg');
     await this.assetRepository.save({ id: asset.id, resizePath });
     return true;
   }
@@ -88,9 +88,8 @@ export class MediaService {
     const { videoStreams } = await this.mediaRepository.probe(asset.originalPath);
     const mainVideoStream = this.getMainVideoStream(videoStreams);
     if (!mainVideoStream) {
-      throw new UnsupportedMediaTypeException(
-        `Could not extract thumbnail for asset ${asset.id}: no video streams found`,
-      );
+      this.logger.warn(`Skipped thumbnail generation for asset ${asset.id}: no video streams found`)
+      return;
     }
     const path = this.ensureThumbnailPath(asset, format);
     const config = { ...ffmpeg, targetResolution: size.toString() };
@@ -115,7 +114,7 @@ export class MediaService {
         throw new UnsupportedMediaTypeException(`Unsupported asset type for thumbnail generation: ${asset.type}`);
     }
 
-    const webpPath = this.getPath(asset, 'webp');
+    const webpPath = this.ensureThumbnailPath(asset, 'webp');
     await this.assetRepository.save({ id: asset.id, webpPath });
     return true;
   }
