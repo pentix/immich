@@ -18,6 +18,7 @@
   class="flex max-w-lg place-items-center rounded-lg border bg-gray-100 p-2 dark:border-transparent dark:bg-gray-700"
   use:clickOutside
   on:outclick={() => dispatch('cancel')}
+  on:escape={() => dispatch('cancel')}
 >
   <ImageThumbnail
     circle

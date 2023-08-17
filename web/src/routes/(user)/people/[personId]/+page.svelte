@@ -31,8 +31,11 @@
   import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
   import Plus from 'svelte-material-icons/Plus.svelte';
   import type { PageData } from './$types';
+  import { assetViewingStore } from '$lib/stores/asset-viewing.store';
 
   export let data: PageData;
+
+  let { isViewing: showAssetViewer } = assetViewingStore;
 
   enum ViewMode {
     VIEW_ASSETS = 'view-assets',
@@ -67,6 +70,18 @@
       viewMode = ViewMode.MERGE_FACES;
     }
   });
+  const handleEscape = () => {
+    if ($showAssetViewer) {
+      return;
+    }
+    if ($isMultiSelectState) {
+      assetInteractionStore.clearMultiselect();
+      return;
+    } else {
+      goto(previousRoute);
+      return;
+    }
+  };
   afterNavigate(({ from }) => {
     // Prevent setting previousRoute to the current page.
     if (from && from.route.id !== $page.route.id) {
@@ -232,6 +247,7 @@
     isSelectionMode={viewMode === ViewMode.SELECT_FACE}
     singleSelect={viewMode === ViewMode.SELECT_FACE}
     on:select={({ detail: asset }) => handleSelectFeaturePhoto(asset)}
+    on:escape={handleEscape}
   >
     {#if viewMode === ViewMode.VIEW_ASSETS || viewMode === ViewMode.SUGGEST_MERGE}
       <!-- Face information block -->

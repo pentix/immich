@@ -54,6 +54,10 @@
     if (!$showAssetViewer) {
       switch (event.key) {
         case 'Escape':
+          if (isMultiSelectionMode) {
+            selectedAssets = new Set();
+            return;
+          }
           if (!$preventRaceConditionSearchBar) {
             goto(previousRoute);
           }

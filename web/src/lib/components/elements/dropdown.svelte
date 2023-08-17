@@ -20,7 +20,7 @@
   };
 </script>
 
-<div id="dropdown-button" use:clickOutside on:outclick={handleClickOutside}>
+<div id="dropdown-button" use:clickOutside on:outclick={handleClickOutside} on:escape={handleClickOutside}>
   <!-- BUTTON TITLE -->
   <LinkButton on:click={() => (showMenu = true)}>
     <div class="flex place-items-center gap-2 text-sm">

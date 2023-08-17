@@ -34,7 +34,7 @@
   $: timelineY = element?.scrollTop || 0;
 
   const onKeyboardPress = (event: KeyboardEvent) => handleKeyboardPress(event);
-  const dispatch = createEventDispatcher<{ select: AssetResponseDto }>();
+  const dispatch = createEventDispatcher<{ select: AssetResponseDto; escape: void }>();
 
   onMount(async () => {
     document.addEventListener('keydown', onKeyboardPress);
@@ -59,7 +59,7 @@
     if (!$showAssetViewer) {
       switch (event.key) {
         case 'Escape':
-          assetInteractionStore.clearMultiselect();
+          dispatch('escape');
           return;
         case '?':
           if (event.shiftKey) {
