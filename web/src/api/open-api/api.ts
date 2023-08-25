@@ -912,6 +912,21 @@ export type CLIPMode = typeof CLIPMode[keyof typeof CLIPMode];
 /**
  * 
  * @export
+ * @enum {string}
+ */
+
+export const CQMode = {
+    Auto: 'auto',
+    Cqp: 'cqp',
+    Icq: 'icq'
+} as const;
+
+export type CQMode = typeof CQMode[keyof typeof CQMode];
+
+
+/**
+ * 
+ * @export
  * @interface ChangePasswordDto
  */
 export interface ChangePasswordDto {
@@ -2805,6 +2820,12 @@ export interface SystemConfigFFmpegDto {
      * @memberof SystemConfigFFmpegDto
      */
     'bframes': number;
+    /**
+     * 
+     * @type {CQMode}
+     * @memberof SystemConfigFFmpegDto
+     */
+    'cqMode': CQMode;
     /**
      * 
      * @type {number}
