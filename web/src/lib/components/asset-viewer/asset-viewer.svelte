@@ -26,7 +26,6 @@
 
   export let assetStore: AssetStore | null = null;
   export let asset: AssetResponseDto;
-  export let publicSharedKey = '';
   export let showNavigation = true;
   export let sharedLink: SharedLinkResponseDto | undefined = undefined;
 
@@ -53,7 +52,9 @@
   onMount(async () => {
     document.addEventListener('keydown', onKeyboardPress);
 
-    getAllAlbums();
+    if (!sharedLink) {
+      getAllAlbums();
+    }
 
     // Import hack :( see https://github.com/vadimkorr/svelte-carousel/issues/27#issuecomment-851022295
     // TODO: Move to regular import once the package correctly supports ESM.
@@ -67,9 +68,13 @@
     }
   });
 
-  $: asset.id && getAllAlbums(); // Update the album information when the asset ID changes
+  $: asset.id && !sharedLink && getAllAlbums(); // Update the album information when the asset ID changes
 
   const getAllAlbums = async () => {
+    if (api.isSharedLink) {
+      return;
+    }
+
     try {
       const { data } = await api.albumApi.getAllAlbums({ assetId: asset.id });
       appearsInAlbums = data;
@@ -82,7 +87,9 @@
     switch (key) {
       case 'a':
       case 'A':
-        if (shiftKey) toggleArchive();
+        if (shiftKey) {
+          toggleArchive();
+        }
         return;
       case 'ArrowLeft':
         navigateAssetBackward();
@@ -92,7 +99,9 @@
         return;
       case 'd':
       case 'D':
-        if (shiftKey) downloadFile(asset, publicSharedKey);
+        if (shiftKey) {
+          downloadFile(asset);
+        }
         return;
       case 'Delete':
         isShowDeleteConfirmation = true;
@@ -270,7 +279,7 @@
       showDownloadButton={shouldShowDownloadButton}
       on:goBack={closeViewer}
       on:showDetail={showDetailInfoHandler}
-      on:download={() => downloadFile(asset, publicSharedKey)}
+      on:download={() => downloadFile(asset)}
       on:delete={() => (isShowDeleteConfirmation = true)}
       on:favorite={toggleFavorite}
       on:addToAlbum={() => openAlbumPicker(false)}
@@ -302,7 +311,6 @@
       {:else if asset.type === AssetTypeEnum.Image}
         {#if shouldPlayMotionPhoto && asset.livePhotoVideoId}
           <VideoViewer
-            {publicSharedKey}
             assetId={asset.livePhotoVideoId}
             on:close={closeViewer}
             on:onVideoEnded={() => (shouldPlayMotionPhoto = false)}
@@ -310,12 +318,12 @@
         {:else if asset.exifInfo?.projectionType === ProjectionType.EQUIRECTANGULAR || asset.originalPath
             .toLowerCase()
             .endsWith('.insp')}
-          <PanoramaViewer {publicSharedKey} {asset} />
+          <PanoramaViewer {asset} />
         {:else}
-          <PhotoViewer {publicSharedKey} {asset} on:close={closeViewer} />
+          <PhotoViewer {asset} on:close={closeViewer} />
         {/if}
       {:else}
-        <VideoViewer {publicSharedKey} assetId={asset.id} on:close={closeViewer} />
+        <VideoViewer assetId={asset.id} on:close={closeViewer} />
       {/if}
     {/key}
   </div>
