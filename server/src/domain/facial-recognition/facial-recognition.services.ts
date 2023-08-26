@@ -43,9 +43,8 @@ export class FacialRecognitionService {
     });
 
     if (force) {
-      const people = await this.personRepository.deleteAll();
-      const faces = await this.searchRepository.deleteAllFaces();
-      this.logger.debug(`Deleted ${people} people and ${faces} faces`);
+      const count = await this.personRepository.deleteAll();
+      this.logger.debug(`Deleted ${count} people`);
     }
 
     for await (const assets of assetPagination) {
@@ -71,20 +70,15 @@ export class FacialRecognitionService {
     const faces = await this.machineLearning.detectFaces(machineLearning.url, { imagePath: asset.resizePath });
 
     this.logger.debug(`${faces.length} faces detected in ${asset.resizePath}`);
-    this.logger.verbose(faces.map((face) => ({ ...face, embedding: `float[${face.embedding.length}]` })));
+    this.logger.verbose(faces.map((face) => ({ ...face, embedding: `vector(${face.embedding.length})` })));
 
     for (const { embedding, ...rest } of faces) {
-      const faceSearchResult = await this.searchRepository.searchFaces(embedding, { ownerId: asset.ownerId });
+      const faces = await this.faceRepository.search(embedding, {
+        ownerId: asset.ownerId,
+        minDistance: 0.3,
+      });
 
-      let personId: string | null = null;
-
-      // try to find a matching face and link to the associated person
-      // The closer to 0, the better the match. Range is from 0 to 2
-      if (faceSearchResult.total && faceSearchResult.distances[0] < 0.6) {
-        this.logger.verbose(`Match face with distance ${faceSearchResult.distances[0]}`);
-        personId = faceSearchResult.items[0].personId;
-      }
-
+      let personId = faces[0]?.personId || null;
       if (!personId) {
         this.logger.debug('No matches, creating a new person.');
         const person = await this.personRepository.create({ ownerId: asset.ownerId });
@@ -96,7 +90,6 @@ export class FacialRecognitionService {
       }
 
       const faceId: AssetFaceId = { assetId: asset.id, personId };
-
       await this.faceRepository.create({
         ...faceId,
         embedding,
@@ -107,7 +100,6 @@ export class FacialRecognitionService {
         boundingBoxY1: rest.boundingBox.y1,
         boundingBoxY2: rest.boundingBox.y2,
       });
-      await this.jobRepository.queue({ name: JobName.SEARCH_INDEX_FACE, data: faceId });
     }
 
     return true;

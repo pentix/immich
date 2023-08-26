@@ -3,7 +3,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { AccessCore, IAccessRepository, Permission } from '../access';
 import { BulkIdErrorReason, BulkIdResponseDto, BulkIdsDto, IAssetRepository } from '../asset';
 import { AuthUserDto } from '../auth';
-import { IJobRepository, JobName } from '../job';
+import { IJobRepository } from '../job';
 import { IUserRepository } from '../user';
 import {
   AlbumCountResponseDto,
@@ -104,7 +104,6 @@ export class AlbumService {
       albumThumbnailAssetId: dto.assetIds?.[0] || null,
     });
 
-    await this.jobRepository.queue({ name: JobName.SEARCH_INDEX_ALBUM, data: { ids: [album.id] } });
     return mapAlbumWithAssets(album);
   }
 
@@ -127,8 +126,6 @@ export class AlbumService {
       albumThumbnailAssetId: dto.albumThumbnailAssetId,
     });
 
-    await this.jobRepository.queue({ name: JobName.SEARCH_INDEX_ALBUM, data: { ids: [updatedAlbum.id] } });
-
     return mapAlbumWithoutAssets(updatedAlbum);
   }
 
@@ -141,7 +138,6 @@ export class AlbumService {
     }
 
     await this.albumRepository.delete(album);
-    await this.jobRepository.queue({ name: JobName.SEARCH_REMOVE_ALBUM, data: { ids: [id] } });
   }
 
   async addAssets(authUser: AuthUserDto, id: string, dto: BulkIdsDto): Promise<BulkIdResponseDto[]> {

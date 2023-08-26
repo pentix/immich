@@ -145,7 +145,6 @@ If you are running immich within docker, the volume pointing to your existing li
     depends_on:
       - redis
       - database
-      - typesense
     restart: always
 
   immich-microservices:
@@ -160,7 +159,6 @@ If you are running immich within docker, the volume pointing to your existing li
     depends_on:
       - redis
       - database
-      - typesense
     restart: always
 ```
 

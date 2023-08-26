@@ -1,12 +1,5 @@
 import { JobName, QueueName } from './job.constants';
-import {
-  IAssetFaceJob,
-  IBaseJob,
-  IBulkEntityJob,
-  IDeleteFilesJob,
-  IEntityJob,
-  IFaceThumbnailJob,
-} from './job.interface';
+import { IBaseJob, IDeleteFilesJob, IEntityJob, IFaceThumbnailJob } from './job.interface';
 
 export interface JobCounts {
   active: number;
@@ -72,18 +65,7 @@ export type JobItem =
   | { name: JobName.CLEAN_OLD_AUDIT_LOGS; data?: IBaseJob }
 
   // Asset Deletion
-  | { name: JobName.PERSON_CLEANUP; data?: IBaseJob }
-
-  // Search
-  | { name: JobName.SEARCH_INDEX_ASSETS; data?: IBaseJob }
-  | { name: JobName.SEARCH_INDEX_ASSET; data: IBulkEntityJob }
-  | { name: JobName.SEARCH_INDEX_FACES; data?: IBaseJob }
-  | { name: JobName.SEARCH_INDEX_FACE; data: IAssetFaceJob }
-  | { name: JobName.SEARCH_INDEX_ALBUMS; data?: IBaseJob }
-  | { name: JobName.SEARCH_INDEX_ALBUM; data: IBulkEntityJob }
-  | { name: JobName.SEARCH_REMOVE_ASSET; data: IBulkEntityJob }
-  | { name: JobName.SEARCH_REMOVE_ALBUM; data: IBulkEntityJob }
-  | { name: JobName.SEARCH_REMOVE_FACE; data: IAssetFaceJob };
+  | { name: JobName.PERSON_CLEANUP; data?: IBaseJob };
 
 export type JobHandler<T = any> = (data: T) => boolean | Promise<boolean>;
 

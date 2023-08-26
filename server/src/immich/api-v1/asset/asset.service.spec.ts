@@ -287,8 +287,6 @@ describe('AssetService', () => {
       ]);
 
       expect(jobMock.queue.mock.calls).toEqual([
-        [{ name: JobName.SEARCH_REMOVE_ASSET, data: { ids: ['asset1'] } }],
-        [{ name: JobName.SEARCH_REMOVE_ASSET, data: { ids: ['asset2'] } }],
         [
           {
             name: JobName.DELETE_FILES,

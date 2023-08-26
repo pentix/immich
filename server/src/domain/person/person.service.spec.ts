@@ -138,10 +138,6 @@ describe(PersonService.name, () => {
 
       expect(personMock.getById).toHaveBeenCalledWith('admin_id', 'person-1');
       expect(personMock.update).toHaveBeenCalledWith({ id: 'person-1', name: 'Person 1' });
-      expect(jobMock.queue).toHaveBeenCalledWith({
-        name: JobName.SEARCH_INDEX_ASSET,
-        data: { ids: [assetStub.image.id] },
-      });
     });
 
     it("should update a person's date of birth", async () => {
@@ -171,10 +167,6 @@ describe(PersonService.name, () => {
 
       expect(personMock.getById).toHaveBeenCalledWith('admin_id', 'person-1');
       expect(personMock.update).toHaveBeenCalledWith({ id: 'person-1', isHidden: false });
-      expect(jobMock.queue).toHaveBeenCalledWith({
-        name: JobName.SEARCH_INDEX_ASSET,
-        data: { ids: [assetStub.image.id] },
-      });
     });
 
     it("should update a person's thumbnailPath", async () => {
@@ -268,11 +260,6 @@ describe(PersonService.name, () => {
       expect(personMock.prepareReassignFaces).toHaveBeenCalledWith({
         newPersonId: personStub.primaryPerson.id,
         oldPersonId: personStub.mergePerson.id,
-      });
-
-      expect(jobMock.queue).toHaveBeenCalledWith({
-        name: JobName.SEARCH_REMOVE_FACE,
-        data: { assetId: assetStub.image.id, personId: personStub.mergePerson.id },
       });
     });
 

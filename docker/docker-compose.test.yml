@@ -17,7 +17,6 @@ services:
       - .env.test
     environment:
       - NODE_ENV=development
-      - TYPESENSE_ENABLED=false
     depends_on:
       - immich-redis-test
       - immich-database-test

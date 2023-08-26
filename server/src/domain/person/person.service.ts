@@ -65,11 +65,6 @@ export class PersonService {
 
     if (dto.name !== undefined || dto.birthDate !== undefined || dto.isHidden !== undefined) {
       person = await this.repository.update({ id, name: dto.name, birthDate: dto.birthDate, isHidden: dto.isHidden });
-      if (this.needsSearchIndexUpdate(dto)) {
-        const assets = await this.repository.getAssets(authUser.id, id);
-        const ids = assets.map((asset) => asset.id);
-        await this.jobRepository.queue({ name: JobName.SEARCH_INDEX_ASSET, data: { ids } });
-      }
     }
 
     if (dto.featureFaceAssetId) {
@@ -152,10 +147,7 @@ export class PersonService {
         const mergeData: UpdateFacesData = { oldPersonId: mergeId, newPersonId: id };
         this.logger.log(`Merging ${mergeName} into ${primaryName}`);
 
-        const assetIds = await this.repository.prepareReassignFaces(mergeData);
-        for (const assetId of assetIds) {
-          await this.jobRepository.queue({ name: JobName.SEARCH_REMOVE_FACE, data: { assetId, personId: mergeId } });
-        }
+        await this.repository.prepareReassignFaces(mergeData);
         await this.repository.reassignFaces(mergeData);
         await this.repository.delete(mergePerson);
 
@@ -167,19 +159,7 @@ export class PersonService {
       }
     }
 
-    // Re-index all faces in typesense for up-to-date search results
-    await this.jobRepository.queue({ name: JobName.SEARCH_INDEX_FACES });
-
     return results;
-  }
-
-  /**
-   * Returns true if the given person update is going to require an update of the search index.
-   * @param dto the Person going to be updated
-   * @private
-   */
-  private needsSearchIndexUpdate(dto: PersonUpdateDto): boolean {
-    return dto.name !== undefined || dto.isHidden !== undefined;
   }
 
   private async findOrFail(authUser: AuthUserDto, id: string) {

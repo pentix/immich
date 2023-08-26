@@ -213,8 +213,6 @@ export class AssetService {
 
     const updatedAsset = await this._assetRepository.update(authUser.id, asset, dto);
 
-    await this.jobRepository.queue({ name: JobName.SEARCH_INDEX_ASSET, data: { ids: [assetId] } });
-
     return mapAsset(updatedAsset);
   }
 
@@ -276,16 +274,7 @@ export class AssetService {
       }
 
       try {
-        if (asset.faces) {
-          await Promise.all(
-            asset.faces.map(({ assetId, personId }) =>
-              this.jobRepository.queue({ name: JobName.SEARCH_REMOVE_FACE, data: { assetId, personId } }),
-            ),
-          );
-        }
-
         await this._assetRepository.remove(asset);
-        await this.jobRepository.queue({ name: JobName.SEARCH_REMOVE_ASSET, data: { ids: [id] } });
 
         result.push({ id, status: DeleteAssetStatusEnum.SUCCESS });
 
