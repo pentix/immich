@@ -35,7 +35,8 @@
 
   const wsPageUnsubscriber = websocketStore.onUploadSuccess.subscribe((asset) => {
     if (!asset) return;
-    console.log('I got a new asset upload here', asset);
+
+    assetStore.addToBucket(asset);
   });
 
   onMount(async () => {
