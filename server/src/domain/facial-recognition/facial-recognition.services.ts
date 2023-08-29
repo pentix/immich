@@ -5,7 +5,6 @@ import { usePagination } from '../domain.util';
 import { IBaseJob, IEntityJob, IFaceThumbnailJob, IJobRepository, JobName, JOBS_ASSET_PAGINATION_SIZE } from '../job';
 import { CropOptions, FACE_THUMBNAIL_SIZE, IMediaRepository } from '../media';
 import { IPersonRepository } from '../person/person.repository';
-import { ISearchRepository } from '../search/search.repository';
 import { IMachineLearningRepository } from '../smart-info';
 import { IStorageRepository, StorageCore, StorageFolder } from '../storage';
 import { ISystemConfigRepository, SystemConfigCore } from '../system-config';
@@ -24,7 +23,6 @@ export class FacialRecognitionService {
     @Inject(IMachineLearningRepository) private machineLearning: IMachineLearningRepository,
     @Inject(IMediaRepository) private mediaRepository: IMediaRepository,
     @Inject(IPersonRepository) private personRepository: IPersonRepository,
-    @Inject(ISearchRepository) private searchRepository: ISearchRepository,
     @Inject(IStorageRepository) private storageRepository: IStorageRepository,
   ) {
     this.configCore = new SystemConfigCore(configRepository);
@@ -73,12 +71,13 @@ export class FacialRecognitionService {
     this.logger.verbose(faces.map((face) => ({ ...face, embedding: `vector(${face.embedding.length})` })));
 
     for (const { embedding, ...rest } of faces) {
-      const faces = await this.faceRepository.search(embedding, {
+      const matches = await this.faceRepository.searchByEmbedding({
         ownerId: asset.ownerId,
-        minDistance: 0.3,
+        embedding,
+        minDistance: 0.6,
       });
 
-      let personId = faces[0]?.personId || null;
+      let personId = matches[0]?.personId || null;
       if (!personId) {
         this.logger.debug('No matches, creating a new person.');
         const person = await this.personRepository.create({ ownerId: asset.ownerId });

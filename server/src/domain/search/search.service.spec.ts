@@ -1,9 +1,8 @@
-import { newMachineLearningRepositoryMock, newSearchRepositoryMock, newSystemConfigRepositoryMock } from '@test';
+import { newMachineLearningRepositoryMock, newSmartInfoRepositoryMock, newSystemConfigRepositoryMock } from '@test';
 import { plainToInstance } from 'class-transformer';
 import { ISystemConfigRepository } from '../index';
-import { IMachineLearningRepository } from '../smart-info';
+import { IMachineLearningRepository, ISmartInfoRepository } from '../smart-info';
 import { SearchDto } from './dto';
-import { ISearchRepository } from './search.repository';
 import { SearchService } from './search.service';
 
 jest.useFakeTimers();
@@ -12,13 +11,13 @@ describe(SearchService.name, () => {
   let sut: SearchService;
   let configMock: jest.Mocked<ISystemConfigRepository>;
   let machineMock: jest.Mocked<IMachineLearningRepository>;
-  let searchMock: jest.Mocked<ISearchRepository>;
+  let smartInfoMock: jest.Mocked<ISmartInfoRepository>;
 
   beforeEach(() => {
     configMock = newSystemConfigRepositoryMock();
     machineMock = newMachineLearningRepositoryMock();
-    searchMock = newSearchRepositoryMock();
-    sut = new SearchService(configMock, machineMock, searchMock);
+    smartInfoMock = newSmartInfoRepositoryMock();
+    sut = new SearchService(configMock, machineMock, smartInfoMock);
   });
 
   it('should work', () => {

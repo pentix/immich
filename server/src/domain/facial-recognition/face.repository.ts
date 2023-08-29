@@ -7,13 +7,14 @@ export interface AssetFaceId {
   personId: string;
 }
 
-export interface SearchOptions {
+export interface EmbeddingSearch {
   ownerId: string;
+  embedding: number[];
   minDistance: number;
 }
 
 export interface IFaceRepository {
-  search(query: number[], filters: SearchOptions): Promise<AssetFaceEntity[]>;
+  searchByEmbedding(search: EmbeddingSearch): Promise<AssetFaceEntity[]>;
   getAll(): Promise<AssetFaceEntity[]>;
   getByIds(ids: AssetFaceId[]): Promise<AssetFaceEntity[]>;
   create(entity: Partial<AssetFaceEntity>): Promise<AssetFaceEntity>;

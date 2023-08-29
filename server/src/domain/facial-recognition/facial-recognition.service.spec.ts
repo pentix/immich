@@ -1,19 +1,20 @@
 import {
+  assetStub,
+  faceStub,
   newAssetRepositoryMock,
   newFaceRepositoryMock,
   newJobRepositoryMock,
   newMachineLearningRepositoryMock,
   newMediaRepositoryMock,
   newPersonRepositoryMock,
-  newSearchRepositoryMock,
   newStorageRepositoryMock,
   newSystemConfigRepositoryMock,
+  personStub,
 } from '@test';
-import { IAssetRepository } from '../asset';
-import { IJobRepository } from '../job';
+import { IAssetRepository, WithoutProperty } from '../asset';
+import { IJobRepository, JobName } from '../job';
 import { IMediaRepository } from '../media';
 import { IPersonRepository } from '../person';
-import { ISearchRepository } from '../search';
 import { IMachineLearningRepository } from '../smart-info';
 import { IStorageRepository } from '../storage';
 import { ISystemConfigRepository } from '../system-config';
@@ -72,7 +73,6 @@ describe(FacialRecognitionService.name, () => {
   let machineLearningMock: jest.Mocked<IMachineLearningRepository>;
   let mediaMock: jest.Mocked<IMediaRepository>;
   let personMock: jest.Mocked<IPersonRepository>;
-  let searchMock: jest.Mocked<ISearchRepository>;
   let storageMock: jest.Mocked<IStorageRepository>;
 
   beforeEach(async () => {
@@ -83,7 +83,6 @@ describe(FacialRecognitionService.name, () => {
     machineLearningMock = newMachineLearningRepositoryMock();
     mediaMock = newMediaRepositoryMock();
     personMock = newPersonRepositoryMock();
-    searchMock = newSearchRepositoryMock();
     storageMock = newStorageRepositoryMock();
 
     mediaMock.crop.mockResolvedValue(croppedFace);
@@ -96,7 +95,6 @@ describe(FacialRecognitionService.name, () => {
       machineLearningMock,
       mediaMock,
       personMock,
-      searchMock,
       storageMock,
     );
   });
@@ -105,188 +103,190 @@ describe(FacialRecognitionService.name, () => {
     expect(sut).toBeDefined();
   });
 
-  // describe('handleQueueRecognizeFaces', () => {
-  //   it('should queue missing assets', async () => {
-  //     assetMock.getWithout.mockResolvedValue({
-  //       items: [assetStub.image],
-  //       hasNextPage: false,
-  //     });
-  //     await sut.handleQueueRecognizeFaces({});
+  describe('handleQueueRecognizeFaces', () => {
+    it('should queue missing assets', async () => {
+      assetMock.getWithout.mockResolvedValue({
+        items: [assetStub.image],
+        hasNextPage: false,
+      });
+      await sut.handleQueueRecognizeFaces({});
 
-  //     expect(assetMock.getWithout).toHaveBeenCalledWith({ skip: 0, take: 1000 }, WithoutProperty.FACES);
-  //     expect(jobMock.queue).toHaveBeenCalledWith({
-  //       name: JobName.RECOGNIZE_FACES,
-  //       data: { id: assetStub.image.id },
-  //     });
-  //   });
+      expect(assetMock.getWithout).toHaveBeenCalledWith({ skip: 0, take: 1000 }, WithoutProperty.FACES);
+      expect(jobMock.queue).toHaveBeenCalledWith({
+        name: JobName.RECOGNIZE_FACES,
+        data: { id: assetStub.image.id },
+      });
+    });
 
-  //   it('should queue all assets', async () => {
-  //     assetMock.getAll.mockResolvedValue({
-  //       items: [assetStub.image],
-  //       hasNextPage: false,
-  //     });
-  //     personMock.deleteAll.mockResolvedValue(5);
+    it('should queue all assets', async () => {
+      assetMock.getAll.mockResolvedValue({
+        items: [assetStub.image],
+        hasNextPage: false,
+      });
+      personMock.deleteAll.mockResolvedValue(5);
 
-  //     await sut.handleQueueRecognizeFaces({ force: true });
+      await sut.handleQueueRecognizeFaces({ force: true });
 
-  //     expect(assetMock.getAll).toHaveBeenCalled();
-  //     expect(jobMock.queue).toHaveBeenCalledWith({
-  //       name: JobName.RECOGNIZE_FACES,
-  //       data: { id: assetStub.image.id },
-  //     });
-  //   });
-  // });
+      expect(assetMock.getAll).toHaveBeenCalled();
+      expect(jobMock.queue).toHaveBeenCalledWith({
+        name: JobName.RECOGNIZE_FACES,
+        data: { id: assetStub.image.id },
+      });
+    });
+  });
 
-  // describe('handleRecognizeFaces', () => {
-  //   it('should skip when no resize path', async () => {
-  //     assetMock.getByIds.mockResolvedValue([assetStub.noResizePath]);
-  //     await sut.handleRecognizeFaces({ id: assetStub.noResizePath.id });
-  //     expect(machineLearningMock.detectFaces).not.toHaveBeenCalled();
-  //   });
+  describe('handleRecognizeFaces', () => {
+    it('should skip when no resize path', async () => {
+      assetMock.getByIds.mockResolvedValue([assetStub.noResizePath]);
+      await sut.handleRecognizeFaces({ id: assetStub.noResizePath.id });
+      expect(machineLearningMock.detectFaces).not.toHaveBeenCalled();
+    });
 
-  //   it('should handle no results', async () => {
-  //     machineLearningMock.detectFaces.mockResolvedValue([]);
-  //     assetMock.getByIds.mockResolvedValue([assetStub.image]);
-  //     await sut.handleRecognizeFaces({ id: assetStub.image.id });
-  //     expect(machineLearningMock.detectFaces).toHaveBeenCalledWith({
-  //       imagePath: assetStub.image.resizePath,
-  //     });
-  //     expect(faceMock.create).not.toHaveBeenCalled();
-  //     expect(jobMock.queue).not.toHaveBeenCalled();
-  //   });
+    it('should handle no results', async () => {
+      machineLearningMock.detectFaces.mockResolvedValue([]);
+      assetMock.getByIds.mockResolvedValue([assetStub.image]);
+      await sut.handleRecognizeFaces({ id: assetStub.image.id });
+      expect(machineLearningMock.detectFaces).toHaveBeenCalledWith('http://immich-machine-learning:3003', {
+        imagePath: assetStub.image.resizePath,
+      });
+      expect(faceMock.create).not.toHaveBeenCalled();
+      expect(jobMock.queue).not.toHaveBeenCalled();
+    });
 
-  //   it('should match existing people', async () => {
-  //     machineLearningMock.detectFaces.mockResolvedValue([face.middle]);
-  //     assetMock.getByIds.mockResolvedValue([assetStub.image]);
-  //     await sut.handleRecognizeFaces({ id: assetStub.image.id });
+    it('should match existing people', async () => {
+      machineLearningMock.detectFaces.mockResolvedValue([face.middle]);
+      faceMock.searchByEmbedding.mockResolvedValue([faceStub.face1]);
+      assetMock.getByIds.mockResolvedValue([assetStub.image]);
+      await sut.handleRecognizeFaces({ id: assetStub.image.id });
 
-  //     expect(faceMock.create).toHaveBeenCalledWith({
-  //       personId: 'person-1',
-  //       assetId: 'asset-id',
-  //       embedding: [1, 2, 3, 4],
-  //       boundingBoxX1: 100,
-  //       boundingBoxY1: 100,
-  //       boundingBoxX2: 200,
-  //       boundingBoxY2: 200,
-  //       imageHeight: 500,
-  //       imageWidth: 400,
-  //     });
-  //   });
+      expect(faceMock.create).toHaveBeenCalledWith({
+        personId: 'person-1',
+        assetId: 'asset-id',
+        embedding: [1, 2, 3, 4],
+        boundingBoxX1: 100,
+        boundingBoxY1: 100,
+        boundingBoxX2: 200,
+        boundingBoxY2: 200,
+        imageHeight: 500,
+        imageWidth: 400,
+      });
+    });
 
-  //   it('should create a new person', async () => {
-  //     machineLearningMock.detectFaces.mockResolvedValue([face.middle]);
-  //     personMock.create.mockResolvedValue(personStub.noName);
-  //     assetMock.getByIds.mockResolvedValue([assetStub.image]);
+    it('should create a new person', async () => {
+      machineLearningMock.detectFaces.mockResolvedValue([face.middle]);
+      faceMock.searchByEmbedding.mockResolvedValue([]);
+      personMock.create.mockResolvedValue(personStub.noName);
+      assetMock.getByIds.mockResolvedValue([assetStub.image]);
 
-  //     await sut.handleRecognizeFaces({ id: assetStub.image.id });
+      await sut.handleRecognizeFaces({ id: assetStub.image.id });
 
-  //     expect(personMock.create).toHaveBeenCalledWith({ ownerId: assetStub.image.ownerId });
-  //     expect(faceMock.create).toHaveBeenCalledWith({
-  //       personId: 'person-1',
-  //       assetId: 'asset-id',
-  //       embedding: [1, 2, 3, 4],
-  //       boundingBoxX1: 100,
-  //       boundingBoxY1: 100,
-  //       boundingBoxX2: 200,
-  //       boundingBoxY2: 200,
-  //       imageHeight: 500,
-  //       imageWidth: 400,
-  //     });
-  //     expect(jobMock.queue.mock.calls).toEqual([
-  //       [
-  //         {
-  //           name: JobName.GENERATE_FACE_THUMBNAIL,
-  //           data: {
-  //             assetId: 'asset-1',
-  //             personId: 'person-1',
-  //             boundingBox: {
-  //               x1: 100,
-  //               y1: 100,
-  //               x2: 200,
-  //               y2: 200,
-  //             },
-  //             imageHeight: 500,
-  //             imageWidth: 400,
-  //             score: 0.2,
-  //           },
-  //         },
-  //       ],
-  //     ]);
-  //   });
-  // });
+      expect(personMock.create).toHaveBeenCalledWith({ ownerId: assetStub.image.ownerId });
+      expect(faceMock.create).toHaveBeenCalledWith({
+        personId: 'person-1',
+        assetId: 'asset-id',
+        embedding: [1, 2, 3, 4],
+        boundingBoxX1: 100,
+        boundingBoxY1: 100,
+        boundingBoxX2: 200,
+        boundingBoxY2: 200,
+        imageHeight: 500,
+        imageWidth: 400,
+      });
+      expect(jobMock.queue.mock.calls).toEqual([
+        [
+          {
+            name: JobName.GENERATE_FACE_THUMBNAIL,
+            data: {
+              assetId: 'asset-1',
+              personId: 'person-1',
+              boundingBox: {
+                x1: 100,
+                y1: 100,
+                x2: 200,
+                y2: 200,
+              },
+              imageHeight: 500,
+              imageWidth: 400,
+              score: 0.2,
+            },
+          },
+        ],
+      ]);
+    });
+  });
 
-  // describe('handleGenerateFaceThumbnail', () => {
-  //   it('should skip an asset not found', async () => {
-  //     assetMock.getByIds.mockResolvedValue([]);
+  describe('handleGenerateFaceThumbnail', () => {
+    it('should skip an asset not found', async () => {
+      assetMock.getByIds.mockResolvedValue([]);
 
-  //     await sut.handleGenerateFaceThumbnail(face.middle);
+      await sut.handleGenerateFaceThumbnail(face.middle);
 
-  //     expect(mediaMock.crop).not.toHaveBeenCalled();
-  //   });
+      expect(mediaMock.crop).not.toHaveBeenCalled();
+    });
 
-  //   it('should skip an asset without a thumbnail', async () => {
-  //     assetMock.getByIds.mockResolvedValue([assetStub.noResizePath]);
+    it('should skip an asset without a thumbnail', async () => {
+      assetMock.getByIds.mockResolvedValue([assetStub.noResizePath]);
 
-  //     await sut.handleGenerateFaceThumbnail(face.middle);
+      await sut.handleGenerateFaceThumbnail(face.middle);
 
-  //     expect(mediaMock.crop).not.toHaveBeenCalled();
-  //   });
+      expect(mediaMock.crop).not.toHaveBeenCalled();
+    });
 
-  //   it('should generate a thumbnail', async () => {
-  //     assetMock.getByIds.mockResolvedValue([assetStub.image]);
+    it('should generate a thumbnail', async () => {
+      assetMock.getByIds.mockResolvedValue([assetStub.image]);
 
-  //     await sut.handleGenerateFaceThumbnail(face.middle);
+      await sut.handleGenerateFaceThumbnail(face.middle);
 
-  //     expect(assetMock.getByIds).toHaveBeenCalledWith(['asset-1']);
-  //     expect(storageMock.mkdirSync).toHaveBeenCalledWith('upload/thumbs/user-id');
-  //     expect(mediaMock.crop).toHaveBeenCalledWith('/uploads/user-id/thumbs/path.jpg', {
-  //       left: 95,
-  //       top: 95,
-  //       width: 110,
-  //       height: 110,
-  //     });
-  //     expect(mediaMock.resize).toHaveBeenCalledWith(croppedFace, 'upload/thumbs/user-id/person-1.jpeg', {
-  //       format: 'jpeg',
-  //       size: 250,
-  //     });
-  //     expect(personMock.update).toHaveBeenCalledWith({
-  //       id: 'person-1',
-  //       thumbnailPath: 'upload/thumbs/user-id/person-1.jpeg',
-  //     });
-  //   });
+      expect(assetMock.getByIds).toHaveBeenCalledWith(['asset-1']);
+      expect(storageMock.mkdirSync).toHaveBeenCalledWith('upload/thumbs/user-id');
+      expect(mediaMock.crop).toHaveBeenCalledWith('/uploads/user-id/thumbs/path.jpg', {
+        left: 95,
+        top: 95,
+        width: 110,
+        height: 110,
+      });
+      expect(mediaMock.resize).toHaveBeenCalledWith(croppedFace, 'upload/thumbs/user-id/person-1.jpeg', {
+        format: 'jpeg',
+        size: 250,
+      });
+      expect(personMock.update).toHaveBeenCalledWith({
+        id: 'person-1',
+        thumbnailPath: 'upload/thumbs/user-id/person-1.jpeg',
+      });
+    });
 
-  //   it('should generate a thumbnail without going negative', async () => {
-  //     assetMock.getByIds.mockResolvedValue([assetStub.image]);
+    it('should generate a thumbnail without going negative', async () => {
+      assetMock.getByIds.mockResolvedValue([assetStub.image]);
 
-  //     await sut.handleGenerateFaceThumbnail(face.start);
+      await sut.handleGenerateFaceThumbnail(face.start);
 
-  //     expect(mediaMock.crop).toHaveBeenCalledWith('/uploads/user-id/thumbs/path.jpg', {
-  //       left: 0,
-  //       top: 0,
-  //       width: 510,
-  //       height: 510,
-  //     });
-  //     expect(mediaMock.resize).toHaveBeenCalledWith(croppedFace, 'upload/thumbs/user-id/person-1.jpeg', {
-  //       format: 'jpeg',
-  //       size: 250,
-  //     });
-  //   });
+      expect(mediaMock.crop).toHaveBeenCalledWith('/uploads/user-id/thumbs/path.jpg', {
+        left: 0,
+        top: 0,
+        width: 510,
+        height: 510,
+      });
+      expect(mediaMock.resize).toHaveBeenCalledWith(croppedFace, 'upload/thumbs/user-id/person-1.jpeg', {
+        format: 'jpeg',
+        size: 250,
+      });
+    });
 
-  //   it('should generate a thumbnail without overflowing', async () => {
-  //     assetMock.getByIds.mockResolvedValue([assetStub.image]);
+    it('should generate a thumbnail without overflowing', async () => {
+      assetMock.getByIds.mockResolvedValue([assetStub.image]);
 
-  //     await sut.handleGenerateFaceThumbnail(face.end);
+      await sut.handleGenerateFaceThumbnail(face.end);
 
-  //     expect(mediaMock.crop).toHaveBeenCalledWith('/uploads/user-id/thumbs/path.jpg', {
-  //       left: 297,
-  //       top: 297,
-  //       width: 202,
-  //       height: 202,
-  //     });
-  //     expect(mediaMock.resize).toHaveBeenCalledWith(croppedFace, 'upload/thumbs/user-id/person-1.jpeg', {
-  //       format: 'jpeg',
-  //       size: 250,
-  //     });
-  //   });
-  // });
+      expect(mediaMock.crop).toHaveBeenCalledWith('/uploads/user-id/thumbs/path.jpg', {
+        left: 297,
+        top: 297,
+        width: 202,
+        height: 202,
+      });
+      expect(mediaMock.resize).toHaveBeenCalledWith(croppedFace, 'upload/thumbs/user-id/person-1.jpeg', {
+        format: 'jpeg',
+        size: 250,
+      });
+    });
+  });
 });

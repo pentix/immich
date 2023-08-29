@@ -1,11 +1,12 @@
+import { AssetEntity } from '@app/infra/entities';
 import { Inject, Injectable } from '@nestjs/common';
-import { AssetResponseDto } from '../asset';
+import { AssetResponseDto, mapAsset } from '../asset';
 import { AuthUserDto } from '../auth';
-import { IMachineLearningRepository } from '../smart-info';
+import { IMachineLearningRepository, ISmartInfoRepository } from '../smart-info';
 import { FeatureFlag, ISystemConfigRepository, SystemConfigCore } from '../system-config';
 import { SearchDto } from './dto';
 import { SearchResponseDto } from './response-dto';
-import { ISearchRepository, SearchExploreItem, SearchStrategy } from './search.repository';
+import { SearchExploreItem, SearchStrategy } from './search.repository';
 
 @Injectable()
 export class SearchService {
@@ -14,7 +15,7 @@ export class SearchService {
   constructor(
     @Inject(ISystemConfigRepository) configRepository: ISystemConfigRepository,
     @Inject(IMachineLearningRepository) private machineLearning: IMachineLearningRepository,
-    @Inject(ISearchRepository) private searchRepository: ISearchRepository,
+    @Inject(ISmartInfoRepository) private smartInfoRepository: ISmartInfoRepository,
   ) {
     this.configCore = new SystemConfigCore(configRepository);
   }
@@ -29,9 +30,16 @@ export class SearchService {
     const query = dto.q || dto.query || '*';
     const strategy = dto.clip && hasClip ? SearchStrategy.CLIP : SearchStrategy.TEXT;
 
+    let assets: AssetEntity[] = [];
+
     switch (strategy) {
       case SearchStrategy.CLIP:
-        const clip = await this.machineLearning.encodeText(machineLearning.url, query);
+        const embedding = await this.machineLearning.encodeText(machineLearning.url, query);
+        assets = await this.smartInfoRepository.searchByEmbedding({
+          ownerId: authUser.id,
+          embedding,
+          minDistance: 0.8,
+        });
         break;
       case SearchStrategy.TEXT:
       default:
@@ -46,9 +54,9 @@ export class SearchService {
         facets: [],
       },
       assets: {
-        total: 0,
-        count: 0,
-        items: [],
+        total: assets.length,
+        count: assets.length,
+        items: assets.map((asset) => mapAsset(asset)),
         facets: [],
       },
     };
