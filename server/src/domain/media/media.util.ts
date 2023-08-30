@@ -37,7 +37,6 @@ class BaseConfig implements VideoCodecSWConfig {
     const options = [
       `-c:v:${videoStream.index} ${this.getVideoCodec()}`,
       `-c:a:${audioStream.index} ${this.getAudioCodec()}`,
-      `-bf ${this.config.bframes}`,
       // Makes a second pass moving the moov atom to the
       // beginning of the file for improved playback speed.
       '-movflags faststart',
@@ -501,10 +500,6 @@ export class VAAPIConfig extends BaseHWConfig {
       throw Error('No VAAPI device found');
     }
     return [`-init_hw_device vaapi=accel:/dev/dri/${this.devices[0]}`, '-filter_hw_device accel'];
-  }
-
-  getBaseOutputOptions(videoStream: VideoStreamInfo, audioStream: AudioStreamInfo) {
-    return [`-vcodec ${this.config.targetVideoCodec}_vaapi`, ...super.getBaseOutputOptions(videoStream, audioStream)];
   }
 
   getFilterOptions(videoStream: VideoStreamInfo) {

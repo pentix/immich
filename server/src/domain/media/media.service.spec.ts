@@ -313,7 +313,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -353,7 +352,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -378,7 +376,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -406,7 +403,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -432,7 +428,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -458,7 +453,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -484,7 +478,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -534,7 +527,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -565,7 +557,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -593,7 +584,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -623,7 +613,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 vp9',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -655,7 +644,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 vp9',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -686,7 +674,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 vp9',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -716,7 +703,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 vp9',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -745,7 +731,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -774,7 +759,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -803,7 +787,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 hevc',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -835,7 +818,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 hevc',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -902,7 +884,6 @@ describe(MediaService.name, () => {
             '-b_qfactor 1.1',
             `-c:v:0 h264_nvenc`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 3',
@@ -944,7 +925,6 @@ describe(MediaService.name, () => {
             '-b_qfactor 1.1',
             `-c:v:0 h264_nvenc`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 3',
@@ -982,7 +962,6 @@ describe(MediaService.name, () => {
             '-b_qfactor 1.1',
             `-c:v:0 h264_nvenc`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 3',
@@ -1021,7 +1000,6 @@ describe(MediaService.name, () => {
             '-b_qfactor 1.1',
             `-c:v:0 h264_nvenc`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 3',
@@ -1056,7 +1034,6 @@ describe(MediaService.name, () => {
             '-b_qfactor 1.1',
             `-c:v:0 h264_nvenc`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 3',
@@ -1088,12 +1065,8 @@ describe(MediaService.name, () => {
         {
           inputOptions: ['-init_hw_device qsv=hw', '-filter_hw_device hw'],
           outputOptions: [
-            '-g 256',
-            '-extbrc 1',
-            '-refs 5',
             `-c:v:0 h264_qsv`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 7',
@@ -1126,12 +1099,8 @@ describe(MediaService.name, () => {
         {
           inputOptions: ['-init_hw_device qsv=hw', '-filter_hw_device hw'],
           outputOptions: [
-            '-g 256',
-            '-extbrc 1',
-            '-refs 5',
             `-c:v:0 h264_qsv`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 7',
@@ -1161,12 +1130,8 @@ describe(MediaService.name, () => {
         {
           inputOptions: ['-init_hw_device qsv=hw', '-filter_hw_device hw'],
           outputOptions: [
-            '-g 256',
-            '-extbrc 1',
-            '-refs 5',
             `-c:v:0 vp9_qsv`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-bf 7',
@@ -1209,7 +1174,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             `-c:v:0 h264_vaapi`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-g 256',
@@ -1240,7 +1204,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             `-c:v:0 h264_vaapi`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-g 256',
@@ -1273,7 +1236,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             `-c:v:0 h264_vaapi`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-g 256',
@@ -1302,7 +1264,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             `-c:v:0 h264_vaapi`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-g 256',
@@ -1327,7 +1288,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             `-c:v:0 h264_vaapi`,
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-g 256',
@@ -1359,7 +1319,6 @@ describe(MediaService.name, () => {
           outputOptions: [
             '-c:v:0 h264',
             '-c:a:0 aac',
-            '-bf 3',
             '-movflags faststart',
             '-fps_mode passthrough',
             '-v verbose',
@@ -1395,7 +1354,6 @@ describe(MediaService.name, () => {
         outputOptions: [
           '-c:v:0 h264',
           '-c:a:0 aac',
-          '-bf 3',
           '-movflags faststart',
           '-fps_mode passthrough',
           '-v verbose',
@@ -1421,7 +1379,6 @@ describe(MediaService.name, () => {
         outputOptions: [
           '-c:v:0 h264',
           '-c:a:0 aac',
-          '-bf 3',
           '-movflags faststart',
           '-fps_mode passthrough',
           '-v verbose',
@@ -1447,7 +1404,6 @@ describe(MediaService.name, () => {
         outputOptions: [
           '-c:v:0 h264',
           '-c:a:0 aac',
-          '-bf 3',
           '-movflags faststart',
           '-fps_mode passthrough',
           '-v verbose',
