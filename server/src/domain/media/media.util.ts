@@ -10,7 +10,7 @@ import {
 } from './media.repository';
 class BaseConfig implements VideoCodecSWConfig {
   presets = ['veryslow', 'slower', 'slow', 'medium', 'fast', 'faster', 'veryfast', 'superfast', 'ultrafast'];
-  constructor(protected config: SystemConfigFFmpegDto) {}
+  constructor(protected config: SystemConfigFFmpegDto) { }
 
   getOptions(videoStream: VideoStreamInfo, audioStream: AudioStreamInfo) {
     const options = {
@@ -356,7 +356,6 @@ export class NVENCConfig extends BaseHWConfig {
       // below settings recommended from https://docs.nvidia.com/video-technologies/video-codec-sdk/12.0/ffmpeg-with-nvidia-gpu/index.html#command-line-for-latency-tolerant-high-quality-transcoding
       '-tune hq',
       '-qmin 0',
-      '-temporal-aq 1',
       '-rc-lookahead 20',
       '-i_qfactor 0.75',
       '-b_qfactor 1.1',
@@ -365,6 +364,9 @@ export class NVENCConfig extends BaseHWConfig {
     if (this.getBFrames() > 0) {
       options.push('-b_ref_mode middle');
       options.push('-b_qfactor 1.1');
+    }
+    if (this.config.temporalAQ) {
+      options.push('-temporal-aq 1');
     }
     return options;
   }
@@ -410,13 +412,6 @@ export class NVENCConfig extends BaseHWConfig {
 
   getThreadOptions() {
     return [];
-  }
-
-  getBFrames() {
-    if (this.config.bframes < 0) {
-      return 3;
-    }
-    return this.config.bframes;
   }
 
   getRefs() {
